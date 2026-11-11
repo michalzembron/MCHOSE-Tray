@@ -1,0 +1,38 @@
+# Build output
+bin/
+obj/
+publish/
+publish-*/
+artifacts/
+*.nupkg
+
+# IDEs
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+*.sln.iml
+
+# Test / coverage
+TestResults/
+coverage*/
+*.coverage
+
+# Python (tools/)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Local scratch (icon previews, captures, logs)
+*.log
+*.pcap
+*.pcapng

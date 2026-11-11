@@ -1,0 +1,13 @@
+# Normalise line endings in the repo; check out with the platform default.
+* text=auto
+
+*.cs      text diff=csharp
+*.xaml    text
+*.csproj  text
+*.sln     text eol=crlf
+*.md      text
+*.py      text
+*.yml     text
+
+*.png     binary
+*.ico     binary

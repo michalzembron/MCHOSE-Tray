@@ -1,0 +1,288 @@
+<Window x:Class="MCHOSE.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MCHOSE Tray" Icon="assets/app.ico" Width="780" Height="580" MinWidth="640" MinHeight="440"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+        <!-- Card in the style of Windows 11 Settings -->
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16,12" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+        <Style x:Key="Label" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,4" />
+        </Style>
+        <Style x:Key="Value" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="Margin" Value="0,4" />
+        </Style>
+        <Style x:Key="Hint" TargetType="TextBlock" BasedOn="{StaticResource Label}">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="2,0,2,8" />
+        </Style>
+
+        <!-- Navigation item in the style of the WinUI 3 NavigationView -->
+        <Style x:Key="NavItem" TargetType="RadioButton">
+            <Setter Property="GroupName" Value="Nav" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Margin" Value="4,2" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bg" Background="Transparent" CornerRadius="4">
+                            <Grid>
+                                <!-- Selection indicator -->
+                                <Border x:Name="Pill" Width="3" Height="16" CornerRadius="1.5" HorizontalAlignment="Left"
+                                        Background="{DynamicResource AccentFillColorDefaultBrush}" Visibility="Collapsed" />
+                                <StackPanel Orientation="Horizontal" Margin="16,0,12,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{TemplateBinding Tag}" FontFamily="{StaticResource IconFont}" FontSize="16"
+                                               VerticalAlignment="Center" />
+                                    <ContentPresenter Margin="14,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                <Setter TargetName="Pill" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Navigation pane (on the Mica backdrop) -->
+        <DockPanel Grid.Column="0" Margin="4,8,4,8">
+            <TextBlock DockPanel.Dock="Top" Text="MCHOSE Tray" FontSize="12" Margin="16,4,0,12"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            <RadioButton DockPanel.Dock="Bottom" x:Name="NavSettings" Style="{StaticResource NavItem}"
+                         Content="Settings" Tag="&#xE713;" Checked="Nav_Checked" />
+            <StackPanel>
+                <RadioButton x:Name="NavBattery" Style="{StaticResource NavItem}" Content="Battery" Tag="&#xE83F;"
+                             IsChecked="True" Checked="Nav_Checked" />
+                <RadioButton x:Name="NavMouse" Style="{StaticResource NavItem}" Content="Mouse" Tag="&#xE962;"
+                             Checked="Nav_Checked" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Content area (layer with rounded top-left corner, like WinUI 3) -->
+        <Border Grid.Column="1" Background="{DynamicResource LayerFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1,1,0,0"
+                CornerRadius="8,0,0,0">
+            <Grid Margin="28,20,28,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Page header -->
+                <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock x:Name="PageTitleText" Text="Battery" FontSize="28" FontWeight="SemiBold" />
+                        <TextBlock Style="{StaticResource Label}" Margin="0,2,0,0" TextTrimming="CharacterEllipsis">
+                            <Run x:Name="DeviceNameRun" Text="MCHOSE Tray" /><Run Text="  ·  " /><Run x:Name="StateRun" Text="Looking for the mouse…" />
+                        </TextBlock>
+                    </StackPanel>
+                    <Button Grid.Column="1" VerticalAlignment="Top" Margin="0,6,0,0" Padding="12,5" Click="Refresh_Click"
+                            ToolTip="Read the mouse again">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" FontSize="14" VerticalAlignment="Center" />
+                            <TextBlock Text="Refresh" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <!-- Pages -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="0,0,0,20">
+                        <!-- Battery page -->
+                        <StackPanel x:Name="BatteryPage">
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                            <TextBlock x:Name="PercentText" Text="–" FontSize="40" FontWeight="SemiBold" />
+                                            <TextBlock Text="%" FontSize="20" Margin="2,0,0,8" VerticalAlignment="Bottom"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                        </StackPanel>
+                                        <TextBlock x:Name="ChargeText" Grid.Column="1" Text="" VerticalAlignment="Bottom" Margin="0,0,0,10"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    </Grid>
+                                    <ProgressBar x:Name="BatteryBar" Minimum="0" Maximum="100" Margin="0,6,0,4" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="Connection" Style="{StaticResource Label}" />
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="ConnectionText" Text="–" Style="{StaticResource Value}" />
+                                    <TextBlock Grid.Row="1" Text="Device ID" Style="{StaticResource Label}" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="DeviceText" Text="–" Style="{StaticResource Value}" />
+                                    <TextBlock Grid.Row="2" Text="Firmware" Style="{StaticResource Label}" />
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="FirmwareText" Text="–" Style="{StaticResource Value}" />
+                                    <TextBlock Grid.Row="3" Text="Last reading" Style="{StaticResource Label}" />
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LastReadText" Text="–" Style="{StaticResource Value}" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Mouse page -->
+                        <StackPanel x:Name="MousePage" Visibility="Collapsed">
+                            <TextBlock x:Name="MouseHintText" Style="{StaticResource Hint}" Margin="2,0,2,10"
+                                       Text="Changes are saved to the mouse's own memory right away." />
+                            <StackPanel x:Name="MouseSettingsRoot">
+                                <Border Style="{StaticResource Card}">
+                                    <Grid x:Name="MouseSettingsGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="170" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                    </Grid>
+                                </Border>
+
+                                <!-- DPI -->
+                                <Border x:Name="DpiCard" Style="{StaticResource Card}" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="DPI" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="170" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Text="Enabled stages" Style="{StaticResource Label}" />
+                                            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="DpiCountBox" MinWidth="120" Margin="0,2"
+                                                      HorizontalAlignment="Left" SelectionChanged="Dpi_Edited" />
+                                            <TextBlock Grid.Row="1" Text="Active stage" Style="{StaticResource Label}" />
+                                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="DpiActiveBox" MinWidth="120" Margin="0,2"
+                                                      HorizontalAlignment="Left" SelectionChanged="Dpi_Edited" />
+                                            <TextBlock Grid.Row="2" Text="Stage values" Style="{StaticResource Label}" VerticalAlignment="Top" Margin="0,10,0,0" />
+                                            <WrapPanel Grid.Row="2" Grid.Column="1" x:Name="DpiStagesPanel" Margin="0,4,0,0" />
+                                        </Grid>
+                                        <Grid Margin="0,8,0,0">
+                                            <TextBlock x:Name="DpiHintText" Style="{StaticResource Hint}" Margin="0" VerticalAlignment="Center"
+                                                       Text="200 – 42000 DPI" />
+                                            <Button x:Name="DpiApplyButton" Content="Apply" HorizontalAlignment="Right" Padding="20,5"
+                                                    IsEnabled="False" Click="DpiApply_Click" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Settings page -->
+                        <StackPanel x:Name="SettingsPage" Visibility="Collapsed">
+                            <Border Style="{StaticResource Card}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="Battery notifications" Style="{StaticResource Value}" />
+                                    <CheckBox Grid.Row="0" Grid.Column="1" x:Name="NotificationsBox" Margin="0,4" HorizontalAlignment="Right"
+                                              Click="Setting_Changed" />
+
+                                    <TextBlock Grid.Row="1" Text="Low battery warning" Style="{StaticResource Value}" />
+                                    <ComboBox Grid.Row="1" Grid.Column="1" x:Name="LowBox" MinWidth="130" Margin="0,4"
+                                              SelectionChanged="Setting_Changed" />
+
+                                    <TextBlock Grid.Row="2" Text="Critical level" Style="{StaticResource Value}" />
+                                    <ComboBox Grid.Row="2" Grid.Column="1" x:Name="CriticalBox" MinWidth="130" Margin="0,4"
+                                              SelectionChanged="Setting_Changed" />
+
+                                    <TextBlock Grid.Row="3" Text="Check battery" Style="{StaticResource Value}" />
+                                    <ComboBox Grid.Row="3" Grid.Column="1" x:Name="IntervalBox" MinWidth="130" Margin="0,4"
+                                              SelectionChanged="Setting_Changed" />
+
+                                    <TextBlock Grid.Row="4" Text="Start with Windows" Style="{StaticResource Value}" />
+                                    <CheckBox Grid.Row="4" Grid.Column="1" x:Name="AutostartBox" Margin="0,4" HorizontalAlignment="Right"
+                                              Click="Autostart_Click" />
+
+                                    <StackPanel Grid.Row="5" VerticalAlignment="Center">
+                                        <TextBlock Text="Animate charging icon" Style="{StaticResource Value}" Margin="0,4,0,0" />
+                                        <TextBlock Text="Off: a static blue bar at the real level" Style="{StaticResource Hint}" Margin="0,0,0,4" />
+                                    </StackPanel>
+                                    <CheckBox Grid.Row="5" Grid.Column="1" x:Name="AnimateChargingBox" Margin="0,4" HorizontalAlignment="Right"
+                                              Click="Setting_Changed" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <TextBlock x:Name="AboutTitleText" Style="{StaticResource Value}" />
+                                    <TextBlock Style="{StaticResource Hint}" Margin="0,2,0,0">
+                                        <Run x:Name="AboutAuthorRun" /> ·
+                                        <Hyperlink x:Name="RepoLink" Click="RepoLink_Click"><Run x:Name="RepoLinkRun" /></Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock Text="Unofficial project, not affiliated with MCHOSE."
+                                               Style="{StaticResource Hint}" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
