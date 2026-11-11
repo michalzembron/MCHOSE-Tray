@@ -3,6 +3,8 @@ bin/
 obj/
 publish/
 publish-*/
+out/
+dist/
 artifacts/
 *.nupkg
 
